@@ -1,17 +1,27 @@
-# Netlify environment variables
+# Environment variables (local only)
 .env
 
-# Google Service Account Key (if you place it directly)
-*.json
+# Google Service Account Key (do NOT commit!)
+google-service-account-key.json
 
 # Node modules - do NOT commit!
 node_modules/
 
-# Logs
+# Build logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# OS junk
+# System files
 .DS_Store
 Thumbs.db
+
+# Netlify build artifacts (optional, for very clean repos)
+.netlify/
+
+# VS Code settings (optional, if you're using VS Code and want clean repo)
+.vscode/
+
+# Local build output (if you add any dist/ or build/ folders in future)
+dist/
+build/
