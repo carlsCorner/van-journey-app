@@ -1,92 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solo Van & Pet Journey - Live Tracking Map</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIINfQRevjFaywCwXgmf8WpSAfo6b Ayn/eY="
-        crossorigin=""/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujjy6Jv9+B/0B9gC/J6U4o1oW+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/w6e/X8+A5+o3+2u+2u4s02c3+zB+xR6e0/h/wxNzU4dC5qcGc%3D" alt="Live Map" style="max-width: 100%; border-radius: 8px;">
-            <p style="text-align: center; font-style: italic; margin-top: 10px; color: #777;">Stay tuned for the map to update as the journey unfolds!</p>
-        </section>
-    </main>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Van Journey - Live Tracking Map</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        #map {
+            height: 600px;
+            width: 100%;
+            border-radius: 8px;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🚐 Live Journey Tracking</h1>
+    <div id="map"></div>
+
+    <p style="text-align: center; font-style: italic; margin-top: 10px; color: #777;">
+        Map updates as new journey points are added!
+    </p>
 
     <footer>
-        <p>© 2025 Solo Van & Pet Journey. All Rights Reserved.</p>
+        <p style="text-align: center; margin-top: 20px;">© 2025 Van Journey Project</p>
     </footer>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjGwZFYhQLadE49OFSzP0c0WzwTLfXo="
-        crossorigin=""></script>
+    <!-- Google Maps JavaScript API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initial map setup (centered generally on the US, will adjust to journey points)
-            const map = L.map('map').setView([39.8283, -98.5795], 4); // Centered on US
+        async function initMap() {
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 32.7555, lng: -97.3308 }, // Default: Fort Worth, TX
+                zoom: 6,
+                mapTypeId: "roadmap"
+            });
 
-            // OpenStreetMap tile layer
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+            try {
+                // Fetch journey points from your dynamic API
+                const response = await fetch('/.netlify/functions/fetch-journey'); // Adjust to your correct function endpoint
+                if (!response.ok) throw new Error('Failed to fetch journey data');
 
-            let journeyLine = null; // To hold the polyline
-            let currentMarker = null; // To hold the current location marker
+                const data = await response.json();
+                const points = data.points || [];
 
-            async function loadJourneyData() {
-                try {
-                    const response = await fetch('/map-data.json'); // Fetch the static JSON file
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch map data');
-                    }
-                    const data = await response.json();
-                    const points = data.points;
-
-                    if (points && points.length > 0) {
-                        const latLngs = points.map(p => [p.lat, p.lon]);
-
-                        // Clear existing line and marker
-                        if (journeyLine) {
-                            map.removeLayer(journeyLine);
-                        }
-                        if (currentMarker) {
-                            map.removeLayer(currentMarker);
-                        }
-
-                        // Draw the journey line
-                        journeyLine = L.polyline(latLngs, {
-                            color: 'var(--burnt-orange-dark)',
-                            weight: 5,
-                            opacity: 0.75
-                        }).addTo(map);
-
-                        // Add a marker for the current (last) location
-                        const lastPoint = latLngs[latLngs.length - 1];
-                        currentMarker = L.marker(lastPoint).addTo(map)
-                            .bindPopup(`<b>Current Location</b><br>${points[points.length - 1].location || 'Unknown'}<br>${new Date(points[points.length - 1].timestamp).toLocaleDateString()}`)
-                            .openPopup();
-
-                        // Fit map bounds to the journey line
-                        map.fitBounds(journeyLine.getBounds());
-                    } else {
-                        console.log('No journey data points found.');
-                        // Optionally add a default marker for the start if no points
-                         L.marker([32.7555, -97.3308]).addTo(map) // Fort Worth
-                            .bindPopup('Journey Start: Fort Worth, TX')
-                            .openPopup();
-                        map.setView([32.7555, -97.3308], 8);
-                    }
-
-                } catch (error) {
-                    console.error('Error loading journey data:', error);
-                    document.getElementById('map').innerHTML = '<p style="text-align: center; color: red;">Failed to load map. Please try again later.</p>';
-                    // Optionally add a fallback image or message if map fails
+                if (points.length === 0) {
+                    console.warn('No journey points found.');
+                    return;
                 }
-            }
 
-            // Load data when the page loads
-            loadJourneyData();
-        });
+                // Plot each point
+                const path = points.map(p => {
+                    const pos = { lat: p.lat, lng: p.lon };
+                    new google.maps.Marker({
+                        position: pos,
+                        map: map,
+                        title: `${p.location || 'Unknown'} - ${new Date(p.timestamp).toLocaleDateString()}`
+                    });
+                    return pos;
+                });
+
+                // Draw journey path (polyline)
+                new google.maps.Polyline({
+                    path: path,
+                    geodesic: true,
+                    strokeColor: '#FF5733',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 4,
+                    map: map
+                });
+
+                // Center map on last point
+                map.setCenter(path[path.length - 1]);
+                map.setZoom(10);
+
+            } catch (error) {
+                console.error('Error loading journey map:', error);
+                document.getElementById('map').innerHTML = '<p style="color:red;text-align:center;">Failed to load map data.</p>';
+            }
+        }
+
+        // Initialize map
+        window.onload = initMap;
     </script>
 </body>
 </html>
