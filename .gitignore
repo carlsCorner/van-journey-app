@@ -16,12 +16,17 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-# Netlify build artifacts (optional, for very clean repos)
+# Netlify build artifacts (optional)
 .netlify/
 
-# VS Code settings (optional, if you're using VS Code and want clean repo)
+# VS Code settings (optional)
 .vscode/
 
-# Local build output (if you add any dist/ or build/ folders in future)
+# Local build output (if used)
 dist/
 build/
+
+# Ignore any backup or temp files
+*~
+*.swp
+*.tmp
