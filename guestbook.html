@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solo Van & Pet Journey - Guest Book</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Sign My Guest Book!</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="itinerary.html">Itinerary</a></li>
+            <li><a href="emergency.html">Emergency Info</a></li>
+            <li><a href="guestbook.html" class="active">Guest Book</a></li>
+            <li><a href="about.html">About & Support</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <section id="guestbook-section">
+            <h2>Leave a Message of Encouragement</h2>
+            <p>Your words mean the world to me! Please take a moment to sign my guest book and share any thoughts, well wishes, or even your own travel wisdom. Every message brings a smile to my face and a boost to my spirits on the road.</p>
+
+            <div class="guestbook-form">
+                <form name="guestbook" method="POST" data-netlify="true">
+                    <label for="name">Your Name:</label>
+                    <input type="text" id="name" name="name" required>
+
+                    <label for="message">Your Message / Words of Encouragement:</label>
+                    <textarea id="message" name="message" rows="5" required></textarea>
+
+                    <button type="submit">Sign Guest Book</button>
+                </form>
+            </div>
+
+            <h3 style="margin-top: 40px;">Recent Entries (Example Entries - Not Live)</h3>
+            <div class="guestbook-entries">
+                <div class="entry">
+                    <p><strong>Traveler's Friend:</strong> "Wishing you safe travels and an incredible adventure! Enjoy every moment, and the dogs will love it too!"</p>
+                    <p style="font-size: 0.9em; color: #777;">- June 5, 2025</p>
+                </div>
+                <div class="entry">
+                    <p><strong>Road Warrior:</strong> "The open road calls! Take it easy, enjoy the scenery, and remember to check those tires. You've got this!"</p>
+                    <p style="font-size: 0.9em; color: #777;">- June 4, 2025</p>
+                </div>
+                <div class="entry">
+                    <p><strong>Dog Lover:</strong> "Give those pups extra belly rubs for me! So inspiring to see you embark on this journey. Strength and joy to you!"</p>
+                    <p style="font-size: 0.9em; color: #777;">- June 3, 2025</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Solo Van & Pet Journey. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>

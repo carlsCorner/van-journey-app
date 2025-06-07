@@ -1,0 +1,275 @@
+/* Custom Properties for Colors */
+:root {
+    --burnt-orange-dark: #8B4513; /* Darker main orange */
+    --burnt-orange-medium: #CD5C00; /* Medium orange */
+    --burnt-orange-light: #FF8C00; /* Lighter accent orange */
+    --text-dark: #333;
+    --text-light: #f4f4f4;
+    --background-dark: #2c3e50;
+    --background-light: #f4f4f4;
+    --card-background: #ffffff;
+    --border-color: #ddd;
+    --link-color: #1abc9c; /* Teal/green for links */
+    --link-hover-color: #16a085;
+}
+
+/* Basic Reset & Body Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-light);
+    color: var(--text-dark);
+}
+
+/* Page Container */
+.container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: var(--card-background);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+/* Header Styling */
+header {
+    background-color: var(--burnt-orange-dark);
+    color: var(--text-light);
+    padding: 25px 0;
+    text-align: center;
+    border-radius: 10px 10px 0 0; /* Rounded top corners */
+    margin-bottom: 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5em;
+    letter-spacing: 1px;
+}
+
+/* Navigation Bar */
+nav {
+    background-color: var(--burnt-orange-medium);
+    padding: 10px 0;
+    text-align: center;
+    border-radius: 0 0 10px 10px; /* Rounded bottom corners */
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex; /* Arrange links horizontally */
+    justify-content: center; /* Center links */
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: var(--text-light);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1em;
+    padding: 8px 12px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border-radius: 5px;
+}
+
+nav ul li a:hover,
+nav ul li a.active {
+    background-color: var(--burnt-orange-light);
+    color: var(--text-dark);
+}
+
+/* Section Headings */
+section h2 {
+    color: var(--burnt-orange-dark);
+    border-bottom: 2px solid var(--burnt-orange-medium);
+    padding-bottom: 10px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 1.8em;
+}
+
+section h3 {
+    color: var(--burnt-orange-medium);
+    margin-top: 25px;
+    margin-bottom: 10px;
+    font-size: 1.4em;
+}
+
+h4 {
+    color: var(--burnt-orange-light);
+    margin-top: 15px;
+    margin-bottom: 8px;
+    font-size: 1.2em;
+}
+
+/* Paragraphs and Lists */
+p {
+    margin-bottom: 10px;
+    line-height: 1.7;
+}
+
+ul {
+    list-style-type: disc;
+    margin-left: 25px;
+    margin-bottom: 10px;
+}
+
+ul ul { /* For nested lists (e.g., amenities under campground) */
+    list-style-type: circle;
+    margin-left: 35px;
+}
+
+ol {
+    margin-left: 25px;
+    margin-bottom: 10px;
+}
+
+/* Link Styling (for map titles and general links) */
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: var(--link-hover-color);
+}
+
+/* Guest Book Specific Styling */
+.guestbook-form {
+    background-color: var(--background-light);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin-top: 20px;
+}
+
+.guestbook-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.guestbook-form input[type="text"],
+.guestbook-form textarea {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.guestbook-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.guestbook-form button {
+    background-color: var(--burnt-orange-medium);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+}
+
+.guestbook-form button:hover {
+    background-color: var(--burnt-orange-dark);
+}
+
+/* Donation Section Styling */
+.donation-section {
+    text-align: center;
+    margin-top: 40px;
+    padding: 30px;
+    background-color: var(--background-light);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.donation-section h3 {
+    color: var(--burnt-orange-dark);
+    margin-bottom: 20px;
+}
+
+.donation-section a.cashapp-button {
+    display: inline-block;
+    background-color: #00C25E; /* Cash App green */
+    color: white;
+    padding: 15px 30px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1.4em;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.donation-section a.cashapp-button:hover {
+    background-color: #00A34E;
+    transform: translateY(-2px);
+}
+
+/* Works Cited section specific styling */
+#works-cited ol {
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+/* Footer Styling */
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    background-color: var(--burnt-orange-dark);
+    color: var(--text-light);
+    border-radius: 0 0 10px 10px;
+    font-size: 0.9em;
+}
+
+/* Responsive Design (basic) */
+@media (max-width: 768px) {
+    .container {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    header h1 {
+        font-size: 1.8em;
+    }
+
+    nav ul {
+        flex-direction: column; /* Stack navigation links vertically */
+    }
+
+    nav ul li {
+        margin: 5px 0;
+    }
+
+    section h2 {
+        font-size: 1.5em;
+    }
+
+    section h3 {
+        font-size: 1.2em;
+    }
+
+    .guestbook-form input[type="text"],
+    .guestbook-form textarea {
+        width: calc(100% - 20px);
+    }
+}
