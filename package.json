@@ -1,0 +1,26 @@
+{
+  "name": "van-journey-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carlsCorner/van-journey-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/carlsCorner/van-journey-app/issues"
+  },
+  "homepage": "https://github.com/carlsCorner/van-journey-app#readme",
+  "engines": {
+    "node": "18.x"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "googleapis": "^150.0.1"
+  }
+}
