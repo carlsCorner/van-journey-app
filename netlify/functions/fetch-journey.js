@@ -2,51 +2,52 @@ const { google } = require('googleapis');
 
 exports.handler = async (event, context) => {
     try {
-        // Load env vars
-        const sheetId = process.env.GOOGLE_SHEET_ID;
-        const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
+        const sheets = google.sheets({ version: 'v4' });
 
-        // Authenticate
         const auth = new google.auth.GoogleAuth({
-            credentials: serviceAccount,
+            credentials: JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY),
             scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly']
         });
 
-        const sheets = google.sheets({ version: 'v4', auth });
+        const client = await auth.getClient();
+        google.options({ auth: client });
 
-        // Fetch data
-        const response = await sheets.spreadsheets.values.get({
-            spreadsheetId: sheetId,
-            range: 'Journey!A2:D' // Adjust sheet name and range
+        const res = await sheets.spreadsheets.values.get({
+            spreadsheetId: process.env.GOOGLE_SHEET_ID,
+            range: 'Journey!A2:H', // A to H columns
         });
 
-        const rows = response.data.values;
+        const rows = res.data.values;
 
         if (!rows || rows.length === 0) {
             return {
                 statusCode: 200,
-                body: JSON.stringify({ points: [] })
+                body: JSON.stringify({ points: [] }),
             };
         }
 
-        // Map rows to JSON
         const points = rows.map(row => ({
             timestamp: row[0],
-            lat: parseFloat(row[1]),
-            lon: parseFloat(row[2]),
-            location: row[3] || ''
+            type: row[1] || '',
+            name: row[2] || '',
+            message: row[3] || '',
+            location: row[4] || '',
+            lat: parseFloat(row[5]),
+            lon: parseFloat(row[6]),
+            image_url: row[7] || '',
         }));
 
         return {
             statusCode: 200,
-            body: JSON.stringify({ points })
+            body: JSON.stringify({ points }),
+            headers: { 'Content-Type': 'application/json' },
         };
 
     } catch (error) {
         console.error('Error fetching journey data:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ message: 'Internal server error' })
+            body: JSON.stringify({ message: 'Internal Server Error' }),
         };
     }
 };
