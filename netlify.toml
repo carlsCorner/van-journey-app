@@ -1,0 +1,21 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+  command = "npm install" # This will install dependencies for Netlify Functions
+
+[[redirects]]
+  from = "/live-tracking"
+  to = "/live-tracking.html"
+  status = 200
+
+[[redirects]]
+  from = "/private-journal"
+  to = "/private-journal.html"
+  status = 200
+
+[[redirects]]
+  from = "/guestbook"
+  to = "/guestbook.html"
+  status = 200
+
+# Add other redirects if you want cleaner URLs for other pages

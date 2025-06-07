@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solo Van & Pet Journey - My Private Journal</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIINfQRevjFaywCwXgmf8WpSAfo6b Ayn/eY="
+        crossorigin=""/>
+</head>
+<body>
+    <header>
+        <h1>My Private Journey Log</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="itinerary.html">Itinerary</a></li>
+            <li><a href="emergency.html">Emergency Info</a></li>
+            <li><a href="guestbook.html">Guest Book</a></li>
+            <li><a href="live-tracking.html">Live Tracking</a></li>
+            <li><a href="about.html">About & Support</a></li>
+            <li><a href="private-journal.html" class="active">My Journal</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <section id="login-section">
+            <div class="login-form" id="loginForm">
+                <h2>Access Private Journal</h2>
+                <input type="password" id="passwordInput" placeholder="Enter password">
+                <button id="loginButton">Login</button>
+                <p id="login-message"></p>
+            </div>
+        </section>
+
+        <section id="journal-section" style="display:none;">
+            <h2>Daily Journal Entry</h2>
+            <p>Welcome to your private space! Here you can log your daily adventures, thoughts, and update your location for the public map.</p>
+
+            <div class="guestbook-form">
+                <form id="journalEntryForm">
+                    <label for="journalMessage">Your Journal Entry:</label>
+                    <textarea id="journalMessage" name="message" rows="8" required></textarea>
+
+                    <label for="currentLocation">Current Location (e.g., City, State):</label>
+                    <input type="text" id="currentLocation" name="location">
+
+                    <label for="latitude">Current Latitude:</label>
+                    <input type="text" id="latitude" name="lat" required>
+
+                    <label for="longitude">Current Longitude:</label>
+                    <input type="text" id="longitude" name="lon" required>
+
+                    <label for="imageUrl">Image URL (Optional):</label>
+                    <input type="text" id="imageUrl" name="image_url" placeholder="Link to an image (e.g., from Imgur, Google Photos)">
+
+                    <label for="makePublic">
+                        <input type="checkbox" id="makePublic" name="make_public">
+                        Make this journal entry public on the Guest Book page?
+                    </label>
+
+                    <button type="submit">Submit Journal Entry & Update Map</button>
+                    <p id="journalFormMessage" style="margin-top: 10px; font-weight: bold;"></p>
+                </form>
+            </div>
+
+            <h2 style="margin-top: 50px;">Private Map Details</h2>
+            <p>This section contains your specific overnight locations and precise coordinates, visible only to those with access.</p>
+            <ul>
+                <li><strong>Day 1 Overnight:</strong> Murphy's Meadow Camp Grounds, McAlester, OK (<a href="https://www.google.com/maps/search/?api=1&query=27+W.+Interstate+Pkwy,+Shawnee,+OK+74804.838630,-95.865180" target="_blank">34.838630, -95.865180</a>)</li>
+                <li><strong>Day 2-5 Overnight:</strong> Lake of the Ozarks / Linn Creek KOA Holiday, Linn Creek, MO (<a href="https://www.google.com/maps/search/?api=1&query=4308+E+Grand+Ave,+Laramie,+WY+82070.000494,-92.748375" target="_blank">38.000494, -92.748375</a>)</li>
+                <li><strong>Day 6 Overnight:</strong> COE Kanopolis Reservoir Riverside Campground, Marquette, KS (<a href="https://www.google.com/maps/search/?api=1&query=4308+E+Grand+Ave,+Laramie,+WY+82070.59972011,-97.93333075" target="_blank">38.59972011, -97.93333075</a>)</li>
+                <li><strong>Day 7 Overnight:</strong> Cabela's RV Park & Campground, Sidney, NE (<a href="https://www.google.com/maps/search/?api=1&query=2700+N+MacArthur+Blvd,+Oklahoma+City,+OK+73131.1155,-102.9589" target="_blank">41.1155, -102.9589</a>)</li>
+                <li><strong>Day 8-10 Overnight:</strong> F.E. Warren AFB FamCamp, Cheyenne, WY (<a href="https://www.google.com/maps/search/?api=1&query=2700+N+MacArthur+Blvd,+Oklahoma+City,+OK+73131.1558,-104.8213" target="_blank">41.1558, -104.8213</a>)</li>
+                <li><strong>Day 11 Final Destination:</strong> Three Forks KOA Journey, Three Forks, MT (<a href="https://www.google.com/maps/search/?api=1&query=1308+N+3rd+St,+Laramie,+WY+82072.9022,-111.554" target="_blank">45.9022, -111.554</a>)</li>
+                </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Solo Van & Pet Journey. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('loginForm');
+            const passwordInput = document.getElementById('passwordInput');
+            const loginButton = document.getElementById('loginButton');
+            const loginMessage = document.getElementById('login-message');
+            const journalSection = document.getElementById('journal-section');
+            const journalEntryForm = document.getElementById('journalEntryForm');
+            const journalFormMessage = document.getElementById('journalFormMessage');
+
+            // Hardcoded password for client-side check (less secure but works with Netlify Functions)
+            // This password MUST match PRIVATE_PAGE_PASSWORD in your .env and Netlify env variables
+            const LOCAL_PASSWORD = 'YourSecretPasswordHere'; // REPLACE THIS WITH YOUR ACTUAL PASSWORD
+
+            loginButton.addEventListener('click', () => {
+                if (passwordInput.value === LOCAL_PASSWORD) {
+                    loginForm.style.display = 'none';
+                    journalSection.style.display = 'block';
+                    loginMessage.textContent = ''; // Clear any previous messages
+                } else {
+                    loginMessage.textContent = 'Incorrect password. Please try again.';
+                    loginMessage.style.color = 'red';
+                }
+            });
+
+            // Handle journal entry form submission
+            journalEntryForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                journalFormMessage.textContent = 'Submitting entry...';
+                journalFormMessage.style.color = 'blue';
+
+                const message = document.getElementById('journalMessage').value;
+                const location = document.getElementById('currentLocation').value;
+                const lat = document.getElementById('latitude').value;
+                const lon = document.getElementById('longitude').value;
+                const imageUrl = document.getElementById('imageUrl').value;
+                const makePublic = document.getElementById('makePublic').checked;
+
+                const payload = {
+                    type: 'journal',
+                    name: 'Your Name (Journal Entry)', // Or a dynamic name if you add a name field
+                    message: message,
+                    location: location,
+                    lat: lat,
+                    lon: lon,
+                    image_url: imageUrl,
+                    password: passwordInput.value // Send password for function authentication
+                };
+
+                try {
+                    // 1. Submit journal entry to Google Sheet
+                    const sheetResponse = await fetch('/.netlify/functions/submit-journal', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const sheetData = await sheetResponse.json();
+
+                    if (!sheetResponse.ok) {
+                        throw new Error(sheetData.message || 'Failed to save journal entry.');
+                    }
+
+                    // 2. If successfully submitted, update public map data
+                    // Only update map if lat/lon are provided
+                    if (lat && lon) {
+                        const mapUpdateResponse = await fetch('/.netlify/functions/update-map-location', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                password: passwordInput.value, // Re-use password for function authentication
+                                lat: lat,
+                                lon: lon
+                            })
+                        });
+
+                        const mapUpdateData = await mapUpdateResponse.json();
+                        if (!mapUpdateResponse.ok) {
+                            console.warn('Map update failed:', mapUpdateData.message);
+                            journalFormMessage.textContent = `Entry saved, but map update failed: ${mapUpdateData.message}`;
+                            journalFormMessage.style.color = 'orange';
+                            return; // Stop here if map update fails, but sheet is good
+                        }
+                    }
+
+                    journalFormMessage.textContent = 'Journal entry submitted and map updated successfully!';
+                    journalFormMessage.style.color = 'green';
+                    journalEntryForm.reset();
+
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    journalFormMessage.textContent = `Error: ${error.message || 'Network error or server issue.'}`;
+                    journalFormMessage.style.color = 'red';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

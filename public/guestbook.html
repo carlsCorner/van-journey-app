@@ -8,7 +8,7 @@
 </head>
 <body>
     <header>
-        <h1>Sign My Guest Book!</h1>
+        <h1>Words of Warmth & Encouragement</h1>
     </header>
 
     <nav>
@@ -17,17 +17,19 @@
             <li><a href="itinerary.html">Itinerary</a></li>
             <li><a href="emergency.html">Emergency Info</a></li>
             <li><a href="guestbook.html" class="active">Guest Book</a></li>
+            <li><a href="live-tracking.html">Live Tracking</a></li>
             <li><a href="about.html">About & Support</a></li>
+            <li><a href="private-journal.html">My Journal</a></li>
         </ul>
     </nav>
 
     <main class="container">
         <section id="guestbook-section">
-            <h2>Leave a Message of Encouragement</h2>
+            <h2>Leave a Message of Support!</h2>
             <p>Your words mean the world to me! Please take a moment to sign my guest book and share any thoughts, well wishes, or even your own travel wisdom. Every message brings a smile to my face and a boost to my spirits on the road.</p>
 
             <div class="guestbook-form">
-                <form name="guestbook" method="POST" data-netlify="true">
+                <form id="guestbookForm">
                     <label for="name">Your Name:</label>
                     <input type="text" id="name" name="name" required>
 
@@ -35,29 +37,104 @@
                     <textarea id="message" name="message" rows="5" required></textarea>
 
                     <button type="submit">Sign Guest Book</button>
+                    <p id="formMessage" style="margin-top: 10px; font-weight: bold;"></p>
                 </form>
             </div>
 
-            <h3 style="margin-top: 40px;">Recent Entries (Example Entries - Not Live)</h3>
-            <div class="guestbook-entries">
-                <div class="entry">
-                    <p><strong>Traveler's Friend:</strong> "Wishing you safe travels and an incredible adventure! Enjoy every moment, and the dogs will love it too!"</p>
-                    <p style="font-size: 0.9em; color: #777;">- June 5, 2025</p>
+            <h3 style="margin-top: 40px;">Journey Stories & Messages</h3>
+            <p>Here you'll find messages from friends and family, alongside select public entries from my personal journey journal!</p>
+            <div id="guestbookEntries" class="guestbook-entries">
+                <p style="text-align: center; color: #777;">Loading guestbook entries...</p>
                 </div>
-                <div class="entry">
-                    <p><strong>Road Warrior:</strong> "The open road calls! Take it easy, enjoy the scenery, and remember to check those tires. You've got this!"</p>
-                    <p style="font-size: 0.9em; color: #777;">- June 4, 2025</p>
-                </div>
-                <div class="entry">
-                    <p><strong>Dog Lover:</strong> "Give those pups extra belly rubs for me! So inspiring to see you embark on this journey. Strength and joy to you!"</p>
-                    <p style="font-size: 0.9em; color: #777;">- June 3, 2025</p>
-                </div>
-            </div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2025 Solo Van & Pet Journey. All Rights Reserved.</p>
+        <p>© 2025 Solo Van & Pet Journey. All Rights Reserved.</p>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const guestbookForm = document.getElementById('guestbookForm');
+            const formMessage = document.getElementById('formMessage');
+            const guestbookEntriesDiv = document.getElementById('guestbookEntries');
+
+            // Function to fetch and display guestbook entries
+            async function fetchGuestbookEntries() {
+                guestbookEntriesDiv.innerHTML = '<p style="text-align: center; color: #777;">Loading guestbook entries...</p>';
+                try {
+                    const response = await fetch('/.netlify/functions/fetch-guestbook');
+                    const entries = await response.json();
+
+                    if (entries.length > 0) {
+                        guestbookEntriesDiv.innerHTML = ''; // Clear loading message
+                        // Sort entries by timestamp (most recent first)
+                        entries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                        entries.forEach(entry => {
+                            const entryDiv = document.createElement('div');
+                            entryDiv.classList.add('entry');
+                            const date = new Date(entry.timestamp).toLocaleDateString('en-US', {
+                                year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                            });
+
+                            entryDiv.innerHTML = `
+                                <p><strong>${entry.name}:</strong> "${entry.message}"</p>
+                                <p style="font-size: 0.9em; color: #777; margin-top: 5px;">- ${date}</p>
+                            `;
+                            guestbookEntriesDiv.appendChild(entryDiv);
+                        });
+                    } else {
+                        guestbookEntriesDiv.innerHTML = '<p style="text-align: center; color: #777;">No entries yet. Be the first to sign!</p>';
+                    }
+                } catch (error) {
+                    console.error('Error fetching guestbook entries:', error);
+                    guestbookEntriesDiv.innerHTML = '<p style="text-align: center; color: red;">Failed to load entries. Please try again later.</p>';
+                }
+            }
+
+            // Handle guestbook form submission
+            guestbookForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                formMessage.textContent = 'Submitting...';
+                formMessage.style.color = 'blue';
+
+                const name = document.getElementById('name').value;
+                const message = document.getElementById('message').value;
+
+                try {
+                    const response = await fetch('/.netlify/functions/submit-journal', { // Use the same function for guestbook to write to sheet
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            type: 'guestbook', // Indicate this is a guestbook entry
+                            name: name,
+                            message: message
+                            // location, lat, lon are not needed for guestbook
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        formMessage.textContent = 'Thank you for signing the guest book!';
+                        formMessage.style.color = 'green';
+                        guestbookForm.reset();
+                        fetchGuestbookEntries(); // Refresh entries to show new one
+                    } else {
+                        formMessage.textContent = `Error: ${data.message || 'Something went wrong.'}`;
+                        formMessage.style.color = 'red';
+                    }
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    formMessage.textContent = 'Network error or server issue. Please try again.';
+                    formMessage.style.color = 'red';
+                }
+            });
+
+            // Initial fetch when the page loads
+            fetchGuestbookEntries();
+        });
+    </script>
 </body>
 </html>
