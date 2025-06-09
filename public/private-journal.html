@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solo Van & Pet Journey - My Private Journal</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIINfQRevjFaywCwXgmf8WpSAfo6b Ayn/eY="
-        crossorigin=""/>
 </head>
 <body>
     <header>
@@ -69,14 +66,7 @@
 
             <h2 style="margin-top: 50px;">Private Map Details</h2>
             <p>This section contains your specific overnight locations and precise coordinates, visible only to those with access.</p>
-            <ul>
-                <li><strong>Day 1 Overnight:</strong> Murphy's Meadow Camp Grounds, McAlester, OK (<a href="https://www.google.com/maps/search/?api=1&query=27+W.+Interstate+Pkwy,+Shawnee,+OK+74804.838630,-95.865180" target="_blank">34.838630, -95.865180</a>)</li>
-                <li><strong>Day 2-5 Overnight:</strong> Lake of the Ozarks / Linn Creek KOA Holiday, Linn Creek, MO (<a href="https://www.google.com/maps/search/?api=1&query=4308+E+Grand+Ave,+Laramie,+WY+82070.000494,-92.748375" target="_blank">38.000494, -92.748375</a>)</li>
-                <li><strong>Day 6 Overnight:</strong> COE Kanopolis Reservoir Riverside Campground, Marquette, KS (<a href="https://www.google.com/maps/search/?api=1&query=4308+E+Grand+Ave,+Laramie,+WY+82070.59972011,-97.93333075" target="_blank">38.59972011, -97.93333075</a>)</li>
-                <li><strong>Day 7 Overnight:</strong> Cabela's RV Park & Campground, Sidney, NE (<a href="https://www.google.com/maps/search/?api=1&query=2700+N+MacArthur+Blvd,+Oklahoma+City,+OK+73131.1155,-102.9589" target="_blank">41.1155, -102.9589</a>)</li>
-                <li><strong>Day 8-10 Overnight:</strong> F.E. Warren AFB FamCamp, Cheyenne, WY (<a href="https://www.google.com/maps/search/?api=1&query=2700+N+MacArthur+Blvd,+Oklahoma+City,+OK+73131.1558,-104.8213" target="_blank">41.1558, -104.8213</a>)</li>
-                <li><strong>Day 11 Final Destination:</strong> Three Forks KOA Journey, Three Forks, MT (<a href="https://www.google.com/maps/search/?api=1&query=1308+N+3rd+St,+Laramie,+WY+82072.9022,-111.554" target="_blank">45.9022, -111.554</a>)</li>
-                </ul>
+            <!-- (you can keep your existing private map details here if you want) -->
         </section>
     </main>
 
@@ -94,17 +84,33 @@
             const journalEntryForm = document.getElementById('journalEntryForm');
             const journalFormMessage = document.getElementById('journalFormMessage');
 
-            // Hardcoded password for client-side check (less secure but works with Netlify Functions)
-            // This password MUST match PRIVATE_PAGE_PASSWORD in your .env and Netlify env variables
-            const LOCAL_PASSWORD = 'YourSecretPasswordHere'; // REPLACE THIS WITH YOUR ACTUAL PASSWORD
+            loginButton.addEventListener('click', async () => {
+                loginMessage.textContent = 'Verifying...';
+                loginMessage.style.color = 'blue';
 
-            loginButton.addEventListener('click', () => {
-                if (passwordInput.value === LOCAL_PASSWORD) {
-                    loginForm.style.display = 'none';
-                    journalSection.style.display = 'block';
-                    loginMessage.textContent = ''; // Clear any previous messages
-                } else {
-                    loginMessage.textContent = 'Incorrect password. Please try again.';
+                try {
+                    const response = await fetch('/.netlify/functions/submit-journal', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            password: passwordInput.value,
+                            action: 'verify'
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        loginForm.style.display = 'none';
+                        journalSection.style.display = 'block';
+                        loginMessage.textContent = '';
+                    } else {
+                        loginMessage.textContent = 'Incorrect password. Please try again.';
+                        loginMessage.style.color = 'red';
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    loginMessage.textContent = 'Error verifying password. Please try again.';
                     loginMessage.style.color = 'red';
                 }
             });
@@ -124,17 +130,16 @@
 
                 const payload = {
                     type: 'journal',
-                    name: 'Your Name (Journal Entry)', // Or a dynamic name if you add a name field
+                    name: 'Your Name (Journal Entry)', // Can be dynamic if you add name field
                     message: message,
                     location: location,
                     lat: lat,
                     lon: lon,
                     image_url: imageUrl,
-                    password: passwordInput.value // Send password for function authentication
+                    password: passwordInput.value // Send password for function auth
                 };
 
                 try {
-                    // 1. Submit journal entry to Google Sheet
                     const sheetResponse = await fetch('/.netlify/functions/submit-journal', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -147,14 +152,13 @@
                         throw new Error(sheetData.message || 'Failed to save journal entry.');
                     }
 
-                    // 2. If successfully submitted, update public map data
-                    // Only update map if lat/lon are provided
+                    // Optionally update map
                     if (lat && lon) {
                         const mapUpdateResponse = await fetch('/.netlify/functions/update-map-location', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
-                                password: passwordInput.value, // Re-use password for function authentication
+                                password: passwordInput.value,
                                 lat: lat,
                                 lon: lon
                             })
@@ -165,7 +169,7 @@
                             console.warn('Map update failed:', mapUpdateData.message);
                             journalFormMessage.textContent = `Entry saved, but map update failed: ${mapUpdateData.message}`;
                             journalFormMessage.style.color = 'orange';
-                            return; // Stop here if map update fails, but sheet is good
+                            return;
                         }
                     }
 
