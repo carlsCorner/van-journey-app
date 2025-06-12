@@ -21,5 +21,5 @@
 [dev]
   framework = "#static"
   autoLaunch = true
-  staticServerPort = 3999
+  targetPort = 3999
   port = 8888
