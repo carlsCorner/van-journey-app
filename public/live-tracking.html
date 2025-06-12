@@ -34,9 +34,7 @@
         <p style="text-align: center; margin-top: 20px;">© 2025 Van Journey Project</p>
     </footer>
 
-    <!-- Google Maps JavaScript API -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6TfaD7QNPCukR62uEj7lBJjACt2NxcKc&callback=initMap"></script>
-
+    <!-- JS: Map + Function -->
     <script>
         async function initMap() {
             const map = new google.maps.Map(document.getElementById("map"), {
@@ -46,8 +44,7 @@
             });
 
             try {
-                // Fetch journey points from your dynamic API
-                const response = await fetch('/.netlify/functions/fetch-journey'); // Adjust to your correct function endpoint
+                const response = await fetch('/.netlify/functions/fetch-journey');
                 if (!response.ok) throw new Error('Failed to fetch journey data');
 
                 const data = await response.json();
@@ -58,7 +55,6 @@
                     return;
                 }
 
-                // Plot each point
                 const path = points.map(p => {
                     const pos = { lat: p.lat, lng: p.lon };
                     new google.maps.Marker({
@@ -69,7 +65,6 @@
                     return pos;
                 });
 
-                // Draw journey path (polyline)
                 new google.maps.Polyline({
                     path: path,
                     geodesic: true,
@@ -79,7 +74,6 @@
                     map: map
                 });
 
-                // Center map on last point
                 map.setCenter(path[path.length - 1]);
                 map.setZoom(10);
 
@@ -89,8 +83,12 @@
             }
         }
 
-        // Initialize map
-        window.onload = initMap;
+        // 👇 Expose initMap globally for Google API
+        window.initMap = initMap;
     </script>
+
+    <!-- Google Maps API: Async & Deferred -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6TfaD7QNPCukR62uEj7lBJjACt2NxcKc&callback=initMap"></script>
+
 </body>
 </html>
