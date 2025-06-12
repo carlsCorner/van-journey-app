@@ -14,7 +14,7 @@ exports.handler = async (event, context) => {
 
         const res = await sheets.spreadsheets.values.get({
             spreadsheetId: process.env.GOOGLE_SHEET_ID,
-            range: 'Journey!A2:H', // A to H columns
+            range: 'Sheet1!A2:H', // A to H columns
         });
 
         const rows = res.data.values;

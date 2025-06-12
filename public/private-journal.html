@@ -1,189 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solo Van & Pet Journey - My Private Journal</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solo Van & Pet Journey - My Private Journal</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <header>
-        <h1>My Private Journey Log</h1>
-    </header>
+  <header>
+    <h1>My Private Journey Log</h1>
+  </header>
 
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="itinerary.html">Itinerary</a></li>
-            <li><a href="emergency.html">Emergency Info</a></li>
-            <li><a href="guestbook.html">Guest Book</a></li>
-            <li><a href="live-tracking.html">Live Tracking</a></li>
-            <li><a href="about.html">About & Support</a></li>
-            <li><a href="private-journal.html" class="active">My Journal</a></li>
-        </ul>
-    </nav>
+  <main class="container">
+    <section id="login-section">
+      <div class="login-form" id="loginForm">
+        <h2>Access Private Journal</h2>
+        <input type="password" id="passwordInput" placeholder="Enter password" />
+        <button id="loginButton">Login</button>
+        <p id="login-message"></p>
+      </div>
+    </section>
 
-    <main class="container">
-        <section id="login-section">
-            <div class="login-form" id="loginForm">
-                <h2>Access Private Journal</h2>
-                <input type="password" id="passwordInput" placeholder="Enter password">
-                <button id="loginButton">Login</button>
-                <p id="login-message"></p>
-            </div>
-        </section>
+    <section id="journal-section" style="display:none;">
+      <h2>Daily Journal Entry</h2>
 
-        <section id="journal-section" style="display:none;">
-            <h2>Daily Journal Entry</h2>
-            <p>Welcome to your private space! Here you can log your daily adventures, thoughts, and update your location for the public map.</p>
+      <form id="journalEntryForm">
+        <label for="journalMessage">Journal Entry:</label>
+        <textarea id="journalMessage" required></textarea>
 
-            <div class="guestbook-form">
-                <form id="journalEntryForm">
-                    <label for="journalMessage">Your Journal Entry:</label>
-                    <textarea id="journalMessage" name="message" rows="8" required></textarea>
+        <label for="currentLocation">Location (City, State):</label>
+        <input type="text" id="currentLocation" />
 
-                    <label for="currentLocation">Current Location (e.g., City, State):</label>
-                    <input type="text" id="currentLocation" name="location">
+        <label for="latitude">Latitude:</label>
+        <input type="text" id="latitude" readonly />
 
-                    <label for="latitude">Current Latitude:</label>
-                    <input type="text" id="latitude" name="lat" required>
+        <label for="longitude">Longitude:</label>
+        <input type="text" id="longitude" readonly />
 
-                    <label for="longitude">Current Longitude:</label>
-                    <input type="text" id="longitude" name="lon" required>
+        <label for="imageFile">Upload or Take a Photo:</label>
+        <input type="file" id="imageFile" accept="image/*" capture="environment" />
 
-                    <label for="imageUrl">Image URL (Optional):</label>
-                    <input type="text" id="imageUrl" name="image_url" placeholder="Link to an image (e.g., from Imgur, Google Photos)">
+        <label>
+          <input type="checkbox" id="makePublic" />
+          Make public?
+        </label>
 
-                    <label for="makePublic">
-                        <input type="checkbox" id="makePublic" name="make_public">
-                        Make this journal entry public on the Guest Book page?
-                    </label>
+        <button type="submit">Submit</button>
+        <p id="journalFormMessage" style="font-weight: bold;"></p>
+      </form>
+    </section>
+  </main>
 
-                    <button type="submit">Submit Journal Entry & Update Map</button>
-                    <p id="journalFormMessage" style="margin-top: 10px; font-weight: bold;"></p>
-                </form>
-            </div>
+  <footer><p>© 2025 Solo Van & Pet Journey</p></footer>
 
-            <h2 style="margin-top: 50px;">Private Map Details</h2>
-            <p>This section contains your specific overnight locations and precise coordinates, visible only to those with access.</p>
-            <!-- (you can keep your existing private map details here if you want) -->
-        </section>
-    </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loginForm = document.getElementById('loginForm');
+      const journalSection = document.getElementById('journal-section');
+      const passwordInput = document.getElementById('passwordInput');
+      const loginButton = document.getElementById('loginButton');
+      const loginMessage = document.getElementById('login-message');
+      const journalEntryForm = document.getElementById('journalEntryForm');
+      const journalFormMessage = document.getElementById('journalFormMessage');
 
-    <footer>
-        <p>© 2025 Solo Van & Pet Journey. All Rights Reserved.</p>
-    </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginForm = document.getElementById('loginForm');
-            const passwordInput = document.getElementById('passwordInput');
-            const loginButton = document.getElementById('loginButton');
-            const loginMessage = document.getElementById('login-message');
-            const journalSection = document.getElementById('journal-section');
-            const journalEntryForm = document.getElementById('journalEntryForm');
-            const journalFormMessage = document.getElementById('journalFormMessage');
-
-            loginButton.addEventListener('click', async () => {
-                loginMessage.textContent = 'Verifying...';
-                loginMessage.style.color = 'blue';
-
-                try {
-                    const response = await fetch('/.netlify/functions/submit-journal', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            password: passwordInput.value,
-                            action: 'verify'
-                        })
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        loginForm.style.display = 'none';
-                        journalSection.style.display = 'block';
-                        loginMessage.textContent = '';
-                    } else {
-                        loginMessage.textContent = 'Incorrect password. Please try again.';
-                        loginMessage.style.color = 'red';
-                    }
-                } catch (error) {
-                    console.error('Login error:', error);
-                    loginMessage.textContent = 'Error verifying password. Please try again.';
-                    loginMessage.style.color = 'red';
-                }
-            });
-
-            // Handle journal entry form submission
-            journalEntryForm.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                journalFormMessage.textContent = 'Submitting entry...';
-                journalFormMessage.style.color = 'blue';
-
-                const message = document.getElementById('journalMessage').value;
-                const location = document.getElementById('currentLocation').value;
-                const lat = document.getElementById('latitude').value;
-                const lon = document.getElementById('longitude').value;
-                const imageUrl = document.getElementById('imageUrl').value;
-                const makePublic = document.getElementById('makePublic').checked;
-
-                const payload = {
-                    type: 'journal',
-                    name: 'Your Name (Journal Entry)', // Can be dynamic if you add name field
-                    message: message,
-                    location: location,
-                    lat: lat,
-                    lon: lon,
-                    image_url: imageUrl,
-                    password: passwordInput.value // Send password for function auth
-                };
-
-                try {
-                    const sheetResponse = await fetch('/.netlify/functions/submit-journal', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    const sheetData = await sheetResponse.json();
-
-                    if (!sheetResponse.ok) {
-                        throw new Error(sheetData.message || 'Failed to save journal entry.');
-                    }
-
-                    // Optionally update map
-                    if (lat && lon) {
-                        const mapUpdateResponse = await fetch('/.netlify/functions/update-map-location', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                password: passwordInput.value,
-                                lat: lat,
-                                lon: lon
-                            })
-                        });
-
-                        const mapUpdateData = await mapUpdateResponse.json();
-                        if (!mapUpdateResponse.ok) {
-                            console.warn('Map update failed:', mapUpdateData.message);
-                            journalFormMessage.textContent = `Entry saved, but map update failed: ${mapUpdateData.message}`;
-                            journalFormMessage.style.color = 'orange';
-                            return;
-                        }
-                    }
-
-                    journalFormMessage.textContent = 'Journal entry submitted and map updated successfully!';
-                    journalFormMessage.style.color = 'green';
-                    journalEntryForm.reset();
-
-                } catch (error) {
-                    console.error('Submission error:', error);
-                    journalFormMessage.textContent = `Error: ${error.message || 'Network error or server issue.'}`;
-                    journalFormMessage.style.color = 'red';
-                }
-            });
+      // Get coordinates automatically
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition((pos) => {
+          document.getElementById('latitude').value = pos.coords.latitude.toFixed(6);
+          document.getElementById('longitude').value = pos.coords.longitude.toFixed(6);
         });
-    </script>
+      }
+
+      loginButton.addEventListener('click', async () => {
+        const res = await fetch('/.netlify/functions/submit-journal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            password: passwordInput.value,
+            action: 'verify'
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          loginForm.style.display = 'none';
+          journalSection.style.display = 'block';
+        } else {
+          loginMessage.textContent = 'Incorrect password.';
+          loginMessage.style.color = 'red';
+        }
+      });
+
+      journalEntryForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        journalFormMessage.textContent = 'Uploading image...';
+        journalFormMessage.style.color = 'blue';
+
+        const message = document.getElementById('journalMessage').value;
+        const location = document.getElementById('currentLocation').value;
+        const lat = document.getElementById('latitude').value;
+        const lon = document.getElementById('longitude').value;
+        const makePublic = document.getElementById('makePublic').checked;
+        const password = passwordInput.value;
+        const imageFile = document.getElementById('imageFile').files[0];
+
+        let imageUrl = '';
+
+        if (imageFile) {
+          const formData = new FormData();
+          formData.append('image', imageFile);
+
+          try {
+            const imgurRes = await fetch('https://api.imgur.com/3/image', {
+              method: 'POST',
+              headers: {
+                Authorization: 'Client-ID c4582eb51bec73c' // ✅ Your Client ID
+              },
+              body: formData
+            });
+
+            const imgurData = await imgurRes.json();
+            if (!imgurRes.ok || !imgurData.success) {
+  console.error('Imgur Error:', imgurData);
+  throw new Error(imgurData?.data?.error || 'Imgur upload failed');
+}
+imageUrl = imgurData.data.link;
+          } catch (err) {
+            journalFormMessage.textContent = 'Image upload failed.';
+            journalFormMessage.style.color = 'red';
+            return;
+          }
+        }
+
+        journalFormMessage.textContent = 'Submitting journal entry...';
+
+        const payload = {
+          type: 'journal',
+          name: 'Your Name',
+          message,
+          location,
+          lat,
+          lon,
+          image_url: imageUrl,
+          public: makePublic,
+          password
+        };
+
+        try {
+          const submitRes = await fetch('/.netlify/functions/submit-journal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          const result = await submitRes.json();
+
+          if (!submitRes.ok) {
+            throw new Error(result.message || 'Failed to submit entry');
+          }
+
+          journalFormMessage.textContent = 'Journal submitted successfully!';
+          journalFormMessage.style.color = 'green';
+          journalEntryForm.reset();
+        } catch (err) {
+          journalFormMessage.textContent = 'Submission error.';
+          journalFormMessage.style.color = 'red';
+        }
+      });
+    });
+  </script>
 </body>
 </html>
